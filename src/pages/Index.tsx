@@ -12,8 +12,7 @@ const Index = () => {
   const [formData, setFormData] = useState({
     name: '',
     interests: '',
-    skills: '',
-    apiKey: ''
+    skills: ''
   });
   const [suggestions, setSuggestions] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -31,45 +30,40 @@ const Index = () => {
       return;
     }
 
-    if (!formData.apiKey) {
-      toast({
-        title: "API Key Required",
-        description: "Please enter your OpenAI API key to get career suggestions.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsLoading(true);
     
     try {
-      const prompt = `The user is named ${formData.name}. Their interests are: ${formData.interests}. Their skills include: ${formData.skills}. Suggest 3 suitable career options for this user. For each option, provide: - A career title - A 2-line description - Two beginner-friendly learning resources (courses or articles).`;
+      // Simulate AI processing delay
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Mock AI response based on user input
+      const mockResponse = `Based on your profile, here are 3 career suggestions for ${formData.name}:
 
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${formData.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          messages: [
-            {
-              role: 'user',
-              content: prompt
-            }
-          ],
-          max_tokens: 1000,
-          temperature: 0.7,
-        }),
-      });
+**1. UX/UI Designer**
+Create intuitive and visually appealing digital experiences for users across web and mobile platforms.
+Combine your creative interests with technical skills to solve user problems through design.
 
-      if (!response.ok) {
-        throw new Error('Failed to get career suggestions');
-      }
+Learning Resources:
+- Google UX Design Certificate (Coursera)
+- "Don't Make Me Think" by Steve Krug
 
-      const data = await response.json();
-      setSuggestions(data.choices[0].message.content);
+**2. Technical Content Creator**
+Develop educational content, tutorials, and documentation that makes complex topics accessible to broader audiences.
+Blend your communication skills with technical knowledge to help others learn and grow.
+
+Learning Resources:
+- Technical Writing Fundamentals (edX)
+- "Everybody Writes" by Ann Handley
+
+**3. Product Manager**
+Guide product development from conception to launch, working with cross-functional teams to build solutions.
+Use your analytical skills and user focus to drive product strategy and execution.
+
+Learning Resources:
+- Product Management Fundamentals (Udemy)
+- "Inspired" by Marty Cagan`;
+
+      setSuggestions(mockResponse);
       
       toast({
         title: "Success!",
@@ -79,7 +73,7 @@ const Index = () => {
       console.error('Error getting career suggestions:', error);
       toast({
         title: "Error",
-        description: "Failed to get career suggestions. Please check your API key and try again.",
+        description: "Failed to get career suggestions. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -92,56 +86,38 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-900 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Sparkles className="h-8 w-8 text-indigo-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <Sparkles className="h-8 w-8 text-teal-400" />
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-teal-400 to-violet-400 bg-clip-text text-transparent">
               AI Career Mentor
             </h1>
           </div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             Discover your perfect career path based on your unique interests and skills. 
             Let AI guide you toward exciting opportunities that match your potential.
           </p>
         </div>
 
         {/* Main Form */}
-        <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm mb-8">
+        <Card className="shadow-xl border border-gray-700 bg-gray-800/80 backdrop-blur-sm mb-8">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-2xl text-gray-800 flex items-center justify-center gap-2">
-              <Target className="h-6 w-6 text-indigo-600" />
+            <CardTitle className="text-2xl text-gray-100 flex items-center justify-center gap-2">
+              <Target className="h-6 w-6 text-teal-400" />
               Tell Us About Yourself
             </CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardDescription className="text-gray-400">
               Share your interests and skills to get personalized career recommendations
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* API Key Input */}
-              <div className="space-y-2">
-                <Label htmlFor="apiKey" className="text-sm font-medium text-gray-700">
-                  OpenAI API Key (Required)
-                </Label>
-                <Input
-                  id="apiKey"
-                  type="password"
-                  placeholder="sk-..."
-                  value={formData.apiKey}
-                  onChange={(e) => handleInputChange('apiKey', e.target.value)}
-                  className="h-12 text-base border-gray-200 focus:border-indigo-400 focus:ring-indigo-400"
-                />
-                <p className="text-xs text-gray-500">
-                  Your API key is stored locally and only used for this session. Get one at openai.com
-                </p>
-              </div>
-
               {/* Name Input */}
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="name" className="text-sm font-medium text-gray-200">
                   Your Name
                 </Label>
                 <Input
@@ -149,13 +125,13 @@ const Index = () => {
                   placeholder="Enter your name"
                   value={formData.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  className="h-12 text-base border-gray-200 focus:border-indigo-400 focus:ring-indigo-400"
+                  className="h-12 text-base bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400 focus:border-teal-400 focus:ring-teal-400"
                 />
               </div>
 
               {/* Interests Textarea */}
               <div className="space-y-2">
-                <Label htmlFor="interests" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="interests" className="text-sm font-medium text-gray-200">
                   Your Interests
                 </Label>
                 <Textarea
@@ -163,13 +139,13 @@ const Index = () => {
                   placeholder="e.g., design, teaching, technology, helping others, solving problems..."
                   value={formData.interests}
                   onChange={(e) => handleInputChange('interests', e.target.value)}
-                  className="min-h-[100px] text-base border-gray-200 focus:border-indigo-400 focus:ring-indigo-400 resize-none"
+                  className="min-h-[100px] text-base bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400 focus:border-teal-400 focus:ring-teal-400 resize-none"
                 />
               </div>
 
               {/* Skills Textarea */}
               <div className="space-y-2">
-                <Label htmlFor="skills" className="text-sm font-medium text-gray-700">
+                <Label htmlFor="skills" className="text-sm font-medium text-gray-200">
                   Your Skills
                 </Label>
                 <Textarea
@@ -177,7 +153,7 @@ const Index = () => {
                   placeholder="e.g., Python, writing, communication, project management, creative thinking..."
                   value={formData.skills}
                   onChange={(e) => handleInputChange('skills', e.target.value)}
-                  className="min-h-[100px] text-base border-gray-200 focus:border-indigo-400 focus:ring-indigo-400 resize-none"
+                  className="min-h-[100px] text-base bg-gray-700 border-gray-600 text-gray-100 placeholder:text-gray-400 focus:border-teal-400 focus:ring-teal-400 resize-none"
                 />
               </div>
 
@@ -185,7 +161,7 @@ const Index = () => {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-teal-500 to-violet-500 hover:from-teal-600 hover:to-violet-600 transition-all duration-200 shadow-lg hover:shadow-xl text-white border-0"
               >
                 {isLoading ? (
                   <>
@@ -205,20 +181,20 @@ const Index = () => {
 
         {/* Results Section */}
         {suggestions && (
-          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+          <Card className="shadow-xl border border-gray-700 bg-gray-800/80 backdrop-blur-sm">
             <CardHeader className="text-center pb-6">
-              <CardTitle className="text-2xl text-gray-800 flex items-center justify-center gap-2">
-                <BookOpen className="h-6 w-6 text-green-600" />
-                Your Career Suggestions
+              <CardTitle className="text-2xl text-gray-100 flex items-center justify-center gap-2">
+                <BookOpen className="h-6 w-6 text-teal-400" />
+                Career Suggestions
               </CardTitle>
-              <CardDescription className="text-gray-600">
+              <CardDescription className="text-gray-400">
                 Based on your interests and skills, here are some exciting career paths to explore
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="prose prose-gray max-w-none">
-                <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg p-6 border border-green-100">
-                  <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
+                <div className="bg-gradient-to-r from-gray-700/50 to-gray-600/50 rounded-lg p-6 border border-gray-600">
+                  <div className="whitespace-pre-wrap text-gray-200 leading-relaxed">
                     {suggestions}
                   </div>
                 </div>
